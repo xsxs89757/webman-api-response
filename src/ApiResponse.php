@@ -18,8 +18,13 @@ trait ApiResponse {
      */
     protected $header = ['Content-Type' => 'application/json'];
 
+    /**
+     * 设置状态码适配器
+     *
+     * @return mixed
+     */
     protected function CodeAdapter(){
-        return Container::get(config('plugin.qifen.webman-api.adapter'));
+        return Container::get(config('plugin.qifen.webman-api.app.adapter'));
     }
 
     /**
@@ -29,7 +34,10 @@ trait ApiResponse {
      * @return $this
      */
     protected function setStatusCode(int $statusCode = 0) {
-        if($statusCode === 0) $statusCode == $this->CodeAdapter()::STATUS_OK;
+        if($statusCode === 0) {
+            $statusCode == $this->CodeAdapter()::STATUS_OK;
+        }
+
         $this->statusCode = $statusCode;
 
         return $this;
@@ -69,10 +77,12 @@ trait ApiResponse {
     protected function status(array $data = [], string $msg = '') {
         $code = $this->statusCode;
 
+        $msg = $this->CodeAdapter()::getStatusText($code, $msg);
+
         $result = [
             'code' => $code,
-            'msg' => Code::getStatusText($code, $msg),
-            'data' => (object)$data,
+            'msg' => $msg,
+            'data' => $data,
         ];
 
         return $this->response($result);
@@ -113,7 +123,7 @@ trait ApiResponse {
      * @return Response
      */
     public function errorWithCode(int $code = 0, string $msg = '', array $data = [], array $header = []) {
-        if($code === 0 ) $code = $this->CodeAdapter()::STATUS_ERROR;
+        if($code === 0) $code = $this->CodeAdapter()::STATUS_ERROR;
         return $this->responseWithCode($code, $data, $msg, $header);
     }
 

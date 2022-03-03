@@ -21,9 +21,6 @@ class Code {
         self::STATUS_PERMISSION_DENIED => '无权限',
     ];
 
-    public $_EXTENDS_MAP = [
-
-    ];
     /**
      * 获取状态码对应状态
      *
@@ -33,7 +30,6 @@ class Code {
      */
     public static function getStatusText($code, string $msg = '') {
         if (!empty($msg)) return $msg;
-        $map = array_merge(self::STATUS_MAP,$this->_EXTENDS_MAP);
-        return isset($map[$code]) ? $map[$code] : '';
+        return isset(self::STATUS_MAP[$code]) ? self::STATUS_MAP[$code] : '';
     }
 }
